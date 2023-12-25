@@ -8,40 +8,40 @@ mongoose.connect('mongodb://127.0.0.1/test4', {
 const newsSchema = new mongoose.Schema({
     _id: {
         type: String,
-        require: true
+        required: true
     },
     business: {
         type: String,
         ref: Business,
-        require: true
+        required: true
     },
     title: {
         type: String,
-        require: true
+        required: true
     },
     start_time: {
         type: String,
-        require: true
+        required: true
     },
     end_time: {
         type: String,
-        require: true
+        required: true
     },
     describe: {
         type: String,
-        require: true
+        required: true
     },
     require: {
         type: String,
-        require: true
+        required: true
     },
     profit: {
         type: String,
-        require: true
+        required: true
     },
     address: {
         type: String,
-        require: true
+        required: true
     }
 });
 

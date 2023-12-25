@@ -13,8 +13,8 @@ router.get("/teacher/student-mana/:id", middlewareController.verifyToken, userCo
 // Cập nhật hồ sơ người dùng (Admin hoặc người dùng)
 router.put("/teacher/student-mana/:id", middlewareController.verifyToken, userController.updateProfile);
 
-// Tạo hồ sơ cho sinh viên có profile null (Chỉ Admin có quyền)
-router.post("/teacher/student-mana/:id", middlewareController.verifyTokenAndAdmin, userController.createProfile);
+// Tạo hồ sơ cho sinh viên 
+router.post("teacher/student-mana", middlewareController.verifyTokenAndAdmin, userController.createProfile);
 
 // Xoá hồ sơ người dùng (Chỉ Admin có quyền)
 router.delete("/teacher/student-mana/:id", middlewareController.verifyTokenAndAdmin, userController.deleteProfile);
@@ -26,5 +26,6 @@ router.get("/teacher/business-mana/:id", middlewareController.verifyTokenAndAdmi
 router.put("/teacher/business-mana/:id", middlewareController.verifyTokenAndAdmin, userController.updateBusiness);
 
 router.delete("/teacher/business-mana/:id", middlewareController.verifyTokenAndAdmin, userController.deleteBusiness);
+
 
 module.exports = router;

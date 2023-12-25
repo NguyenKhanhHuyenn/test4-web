@@ -8,23 +8,23 @@ mongoose.connect('mongodb://127.0.0.1/test4', {
 const teacherSchema = new mongoose.Schema({
     _id: {
         type: String,
-        require: true
+        required: true
     },
     firstname: {
         type: String,
-        require: true
+        required: true
     },
     lastname: {
         type: String,
-        require: true
+        required: true
     },
     address: {
         type: String,
-        require: true
+        required: true
     },
     position: {
         type: String,
-        require: true
+        required: true
     }
 });
 const Teachers = mongoose.model("Teacher", teacherSchema);

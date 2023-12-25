@@ -102,27 +102,22 @@ const userController = {
 
     createProfile: async (req, res) => {
         try {
-            const userId = req.params.id;
-            const requestingUserId = req.account.id;
-
-            const account = await Account.findById(userId);
-            if (!account) {
-                return res.status(404).json("Account not found");
-            }
-
-            // Check if the user already has a profile
-            if (account.profile) {
-                return res.status(400).json("Account already has a profile");
-            }
-
-            // Create a new profile
             const newProfile = {
-                
+                _id: userId, 
+                name: req.body.name,
+                birthday: req.body.birthday,
+                sex: req.body.sex,
+                field: req.body.field,
+                major: req.body.major,
+                email: req.body.email,
+                phone: req.body.phone,
+                cpa: req.body.cpa,
+                cert: req.body.cert
             };
-
-            account.profile = newProfile;
-            await account.save();
-
+    
+            const studentProfile = new Student(newProfile);
+            await studentProfile.save();
+    
             res.status(201).json("Profile created successfully");
         } catch (err) {
             res.status(500).json({ error: "Internal Server Error", details: err.message });
@@ -193,6 +188,30 @@ const userController = {
             res.status(500).json({ error: "Internal Server Error", details: err.message });
         }
     },
+    createABusiness: async (req, res) => {
+        try {
+            // Extract business information from the request body
+            const { _id, name, field, address, website, phone_number } = req.body;
+    
+            // Create a new business instance
+            const newBusiness = new Business({
+                _id, 
+                name,
+                field,
+                address,
+                website,
+                phone_number
+            });
+    
+            // Save the new business to the database
+            await newBusiness.save();
+    
+            res.status(201).json("Business created successfully");
+        } catch (err) {
+            res.status(500).json({ error: "Internal Server Error", details: err.message });
+        }
+    
+    }
 
 
 };

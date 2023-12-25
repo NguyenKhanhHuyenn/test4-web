@@ -11,12 +11,12 @@ const positionSchema = new mongoose.Schema({
     },
     name: {
         type: String,
-        require: true
+        required: true
     },
     business: {
         type: String,
         ref: Business,
-        require: true
+        required: true
     },
     capacity: {
         type: Number,
