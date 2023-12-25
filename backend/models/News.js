@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Business = require("./Business")
 // Thêm useNewUrlParser và useUnifiedTopology vào options
-mongoose.connect('mongodb://0.0.0.0:27017/web', {
+mongoose.connect('mongodb://127.0.0.1/test4', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });

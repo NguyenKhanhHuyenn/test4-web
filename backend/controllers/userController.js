@@ -1,125 +1,200 @@
-// controllers/userController.js
-const Profile = require('../models/Student');
-const Accounts = require('../models/Account');
-const User = require('../models/Account');
+const jwt = require("jsonwebtoken");
+const Account = require("../models/Account")
+const Student = require("../models/Student")
+const Business = require("../models/Business")
+
 const userController = {
+    // GET PROFILE (ADMIN OR STUDENT)
     getProfile: async (req, res) => {
         try {
             const userId = req.params.id;
-            const requestingUserId = req.user.id;
-            const requestingUserRole = req.user.role;
-            if (requestingUserRole === 'admin' || userId === requestingUserId) {
-                const user = await Accounts.findById(userId).populate('_id');
-                if (!user) {
-                    return res.status(404).json('User not found');
+            const requestingUserId = req.account.id;
+            const requestingUserRole = req.account.role;
+
+            // Ensure only admin or the owner can view the profile
+            if (requestingUserRole === "admin" || userId === requestingUserId) {
+                const student = await Student.findById(userId);
+                if (!student) {
+                    return res.status(404).json("Student don't have profile");
                 }
-
-                const responseProfile =
-                    requestingUserRole === 'student' && userId !== requestingUserId
-                        ? user.profile.getPublicProfile()
-                        : user.profile;
-
-                res.status(200).json(responseProfile);
+                // Return the full profile for admins or the account owner
+                res.status(200).json(student);
             } else {
                 return res.status(403).json("You're not allowed to view this profile");
             }
         } catch (err) {
-            res.status(500).json(err);
+            res.status(500).json({ error: "Internal Server Error", details: err.message });
         }
     },
 
+    // UPDATE PROFILE (ADMIN OR STUDENT)
     updateProfile: async (req, res) => {
         try {
             const userId = req.params.id;
-            const user = await Accounts.findById(userId).populate('_id');
-            if (!user) {
-                return res.status(404).json('User not found');
+            const requestingUserId = req.account.id;
+            const requestingUserRole = req.account.role;
+
+            const account = await Account.findById(userId);
+            if (!account) {
+                return res.status(404).json("Account not found");
             }
 
-            if (req.body.firstname) user.firstname = req.body.firstname;
-            if (req.body.lastname) user.lastname = req.body.lastname;
-            if (req.body.address) user.address = req.body.address;
-            if (req.body.major) user.major = req.body.major;
-            if (req.body.gpa) user.gpa = req.body.gpa;
+            // Ensure only admin or the owner can update the profile
+            if (requestingUserRole !== "admin" && userId !== requestingUserId) {
+                return res.status(403).json("You're not allowed to update this profile");
+            }
 
-            await user.save(); // Save the profile separately
-            res.status(200).json('Profile updated successfully');
+            const studentId = account._id;
+            const student = await Student.findById(studentId);
+            if (!student) {
+                return res.status(404).json("Student profile not found");
+            }
+
+            // Update profile information as requested
+            if (req.body.name) student.name = req.body.name;
+            if (req.body.birthday) student.birthday = req.body.birthday;
+            if (req.body.sex) student.sex = req.body.sex;
+            if (req.body.field) student.field = req.body.field;
+            if (req.body.major) student.major = req.body.major;
+            if (req.body.email) student.email = req.body.email;
+            if (req.body.phone) student.phone = req.body.phone;
+            if (req.body.cpa) student.cpa = req.body.cpa;
+            if (req.body.cert) student.cert = req.body.cert;
+
+            await student.save();
+            res.status(200).json("Profile updated successfully");
         } catch (err) {
-            res.status(500).json({ error: 'Internal Server Error', chiTiet: err.message });
+            res.status(500).json({ error: "Internal Server Error", details: err.message });
         }
     },
 
+    // DELETE PROFILE (ADMIN)
     deleteProfile: async (req, res) => {
         try {
             const userId = req.params.id;
-            const user = await User.findById(userId).populate('profile');
 
-            if (!user) {
-                return res.status(404).json('User not found');
+            // Find the student profile by ID
+            const student = await Student.findById(userId);
+
+            if (!student) {
+                return res.status(404).json("Student not found");
             }
 
-            if (user.profile) {
-                await Profile.findByIdAndDelete(user.profile._id); // Delete the profile separately
-                user.profile = null;
-            }
+            // Delete the student profile
+            await Student.findByIdAndDelete(userId);
 
-            await user.save();
-            res.status(200).json('Profile deleted successfully');
+            res.status(200).json("Profile deleted successfully");
         } catch (err) {
-            res.status(500).json({ error: 'Internal Server Error', chiTiet: err.message });
+            res.status(500).json({ error: "Internal Server Error", details: err.message });
         }
     },
 
     getAllProfiles: async (req, res) => {
         try {
-            const users = await User.find({ role: 'student' }).populate('profile');
-            const profiles = users.map((user) => ({
-                userId: user._id,
-                username: user.username,
-                profile: user.profile ? user.profile : {},
-            }));
-
-            return res.status(200).json(profiles);
+            const students = await Student.find({}, 'firstname lastname major');
+    
+            return res.status(200).json(students);
         } catch (err) {
             console.error(err);
-            return res.status(500).json({ error: 'Internal Server Error' });
+            return res.status(500).json({ error: "Internal Server Error", details: err.message });
         }
     },
 
     createProfile: async (req, res) => {
         try {
             const userId = req.params.id;
-            const requestingUserId = req.user.id;
+            const requestingUserId = req.account.id;
 
-            const user = await User.findById(userId).populate('profile');
-            if (!user) {
-                return res.status(404).json('User not found');
+            const account = await Account.findById(userId);
+            if (!account) {
+                return res.status(404).json("Account not found");
             }
 
-            if (user.profile) {
-                return res.status(400).json('User already has a profile');
+            // Check if the user already has a profile
+            if (account.profile) {
+                return res.status(400).json("Account already has a profile");
             }
 
+            // Create a new profile
             const newProfile = {
-                fullName: req.body.fullName,
-                studentId: req.body.studentId,
-                dateOfBirth: req.body.dateOfBirth,
-                gender: req.body.gender,
-                faculty: req.body.faculty,
-                major: req.body.major,
-                gpa: req.body.gpa,
-                advisor: req.body.advisor,
+                
             };
 
-            const createdProfile = await Profile.create(newProfile);
-            user.profile = createdProfile._id;
-            await user.save();
+            account.profile = newProfile;
+            await account.save();
 
-            res.status(201).json('Profile created successfully');
+            res.status(201).json("Profile created successfully");
         } catch (err) {
-            res.status(500).json({ error: 'Internal Server Error', chiTiet: err.message });
+            res.status(500).json({ error: "Internal Server Error", details: err.message });
         }
     },
+    getAllBusinesses: async (req, res) => {
+        try {
+            const businesses = await Business.find();
+    
+            return res.status(200).json(businesses);
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error", details: err.message });
+        }
+    },
+
+    getOneBusiness: async (req, res) => {
+        try {
+            const businessId = req.params.id;
+            const business = await Business.findById(businessId);
+                if (!business) {
+                    return res.status(404).json("Wrong id of business");
+                }
+                res.status(200).json(business);
+        } catch (err) {
+            console.error(err)
+            return res.status(500).json({ error: "Internal Server Error", details: err.message });
+            
+        }
+    },
+
+    updateBusiness: async (req, res) => {
+        try {
+            const businessId = req.params.id
+
+            const business = await Business.findById(businessId);
+            if (!business) {
+                return res.status(404).json("Business not found");
+            }
+
+            // Update profile information as requested
+            if (req.body.name) business.name = req.body.name;
+            if (req.body.field) business.field = req.body.field;
+            if (req.body.address) business.address = req.body.address;
+            if (req.body.website) business.website = req.body.website;
+            if (req.body.phone_number) business.phone_number = req.body.phone_number;
+
+            await business.save();
+            res.status(200).json("Business updated successfully");
+        } catch (err) {
+            res.status(500).json({ error: "Internal Server Error", details: err.message });
+        }
+    },
+
+    deleteBusiness: async (req, res) => {
+        try {
+            const businessId = req.params.id;
+            const business = await Business.findById(businessId);
+
+            if (!business) {
+                return res.status(404).json("Business not found");
+            }
+
+            await Business.findByIdAndDelete(businessId);
+
+            res.status(200).json("Business deleted successfully");
+        } catch (err) {
+            res.status(500).json({ error: "Internal Server Error", details: err.message });
+        }
+    },
+
+
 };
 
 module.exports = userController;

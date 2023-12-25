@@ -1,6 +1,11 @@
 const Student = require('./Student');
 const mongoose = require('mongoose');
 
+mongoose.connect('mongodb://127.0.0.1/test4', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
+
 // Thêm useNewUrlParser và useUnifiedTopology vào options
 const accountSchema = new mongoose.Schema({
     _id: {

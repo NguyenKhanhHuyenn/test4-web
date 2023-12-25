@@ -1,20 +1,28 @@
 const mongoose = require('mongoose');
 
 // Thêm useNewUrlParser và useUnifiedTopology vào options
+mongoose.connect('mongodb://127.0.0.1/test4', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
 const studentSchema = new mongoose.Schema({
     _id: {
         type: String,
         require: true
     },
-    firstname: {
+    name: {
         type: String,
         require: true
     },
-    lastname: {
+    birthday: {
+        type: Date,
+        require: true
+    },
+    sex: {
         type: String,
         require: true
     },
-    address: {
+    field: {
         type: String,
         require: true
     },
@@ -22,9 +30,19 @@ const studentSchema = new mongoose.Schema({
         type: String,
         require: true
     },
-    gpa: {
+    email: {
+        type: String,
+        require: true
+    },
+    phone: {
+        type: String
+    },
+    cpa: {
         type: Number,
         require: true
+    },
+    cert: {
+        type: Number
     }
 });
 const Students = mongoose.model("Student", studentSchema);

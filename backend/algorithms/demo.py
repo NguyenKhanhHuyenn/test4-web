@@ -1,8 +1,8 @@
 import pymongo
 
 # Connect to MongoDB
-client = pymongo.MongoClient("mongodb://localhost:27017/")  # Use the correct IP address or hostname
-db = client["web"]
+client = pymongo.MongoClient("mongodb://127.0.0.1/")  # Use the correct IP address or hostname
+db = client["test4"]
 students_collection = db["students"]
 positions_collection = db['positions']
 promises_collection = db['promises']

@@ -16,13 +16,8 @@ const middlewareController = {
                     return res.status(403).json("Token is not valid");
                 }
 
-                // Check if the user is themselves or an admin
-                if (account._id.toString() === req.params.id || account.role === "admin") {
-                    req.account = account;
-                    next();
-                } else {
-                    return res.status(403).json("You're not allowed to perform this action");
-                }
+                req.account = account;
+                next()
             } else {
                 return res.status(401).json("You're not authenticated");
             }
