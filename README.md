@@ -1,5 +1,5 @@
 
-THAY ĐƯỜNG DẪN CHO TẤT CẢ CÁC FILE TRONG MODEL VÀ INDEX.JS NHAAAAAAAA
+THAY ĐƯỜNG DẪN ĐẾN DATABASE CHO TẤT CẢ CÁC FILE TRONG MODEL VÀ INDEX.JS NHAAAAAAAA
 
 #Tạo cơ sở dữ liệu và check api:
 Sau khi clone code về máy, chạy npm install bla bla
