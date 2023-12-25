@@ -1,3 +1,6 @@
+
+THAY ĐƯỜNG DẪN CHO TẤT CẢ CÁC FILE TRONG MODEL VÀ INDEX.JS NHAAAAAAAA
+
 #Tạo cơ sở dữ liệu và check api:
 Sau khi clone code về máy, chạy npm install bla bla
 - Chạy file create.js trong algorithms: node create.js
