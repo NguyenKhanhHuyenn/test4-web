@@ -8,38 +8,38 @@ mongoose.connect('mongodb://127.0.0.1/test4', {
 const studentSchema = new mongoose.Schema({
     _id: {
         type: String,
-        require: true
+        required: true
     },
     name: {
         type: String,
-        require: true
+        required: true
     },
     birthday: {
         type: Date,
-        require: true
+        required: true
     },
     sex: {
         type: String,
-        require: true
+        required: true
     },
     field: {
         type: String,
-        require: true
+        required: true
     },
     major: {
         type: String,
-        require: true
+        required: true
     },
     email: {
         type: String,
-        require: true
+        required: true
     },
     phone: {
         type: String
     },
     cpa: {
         type: Number,
-        require: true
+        required: true
     },
     cert: {
         type: Number

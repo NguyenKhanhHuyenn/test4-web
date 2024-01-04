@@ -22,6 +22,12 @@ const userController = {
             } else {
                 return res.status(403).json("You're not allowed to view this profile");
             }
+            // const student = await Student.findById(req.account.id);
+            //     if (!student) {
+            //         return res.status(404).json("Student don't have profile");
+            //     }
+            //     res.status(200).json(student);
+            
         } catch (err) {
             res.status(500).json({ error: "Internal Server Error", details: err.message });
         }

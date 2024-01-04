@@ -7,7 +7,6 @@ const cookieParser = require('cookie-parser');
 const authRoute = require("./routes/auth");
 const userRoute = require("./routes/user");
 const internRoute = require("./routes/intern");
-const { exec } = require('child_process');
 
 const app = express();
 dotenv.config();
@@ -25,22 +24,6 @@ app.use("/", authRoute);
 app.use("/", userRoute);
 app.use("/", internRoute);
 
-app.get('/runcode', (req, res) => {
-    exec('python F:\\nodejs\\Test\\web\\backend\\algorithms\\demo.py', (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error executing the Python script: ${error}`);
-        return res.status(500).send('Internal Server Error');
-      }
-  
-      try {
-        const jsonData = JSON.parse(stdout);
-        res.json(jsonData);
-      } catch (parseError) {
-        console.error(`Error parsing JSON: ${parseError}`);
-        res.send(stdout.replace(/\n/g, '<br>'));
-      }
-    });
-});
 
 
 app.listen(8000, () => {
